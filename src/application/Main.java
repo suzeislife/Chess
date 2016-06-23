@@ -118,7 +118,7 @@ public class Main extends Application {
 						for (int i = 0; i < 8; i++) {
 							for (int j = 0; j < 8; j++) {
 								if (event.getSource().equals(tab[i][j])) {
-									changePion(i, j);
+									changePion(j, i);
 								}
 							}
 						}
@@ -197,23 +197,30 @@ public class Main extends Application {
 
 	}
 
+	ImageView iconeTampon;
+	Piece pieceTampon = null;
+	Position temp = null;
+
 	@SuppressWarnings("unused")
 	public void changePion(int ligne, int colonne) {
-		Piece pieceTampon = null;
-		ImageView iconeTampon;
+
 		int ligneClic;
 		int colonneClic;
 		Position depart, arrivee;
 		String couleurControle = "blanc";
-		Position temp = null;
 
 		if ((echiquier.getCase(colonne, ligne).getPiece() != null | pieceTampon != null)) {
+
 			if (pieceTampon == null) {
 				if (echiquier.getCase(colonne, ligne).getPiece().getCouleur().equals(couleurControle)) {
 					pieceTampon = echiquier.getCase(colonne, ligne).getPiece();
 					iconeTampon = (ImageView) tab[colonne][ligne].getGraphic();
 					temp = new Position(colonne, ligne);
-					tab[colonne][ligne].setStyle("-fx-border-color: red");
+					System.out.println(tab[colonne][ligne].getStyle());
+					String s = tab[colonne][ligne].getStyle();
+					tab[colonne][ligne].setStyle("-fx-border-color: red;" + s);
+					System.out.println(tab[colonne][ligne].getStyle());
+
 				}
 
 			} else {
@@ -243,9 +250,15 @@ public class Main extends Application {
 							System.exit(0);
 					} else {
 						echiquier.getCase(temp.getColonne(), temp.getLigne()).setPiece(null);
-						tab[temp.getColonne()][temp.getLigne()].setStyle("-fx-border-color: white");
+						System.out.println("dedew " + tab[temp.getColonne()][temp.getLigne()].getStyle());
+						tab[temp.getColonne()][temp.getLigne()]
+								.setStyle(tab[temp.getColonne()][temp.getLigne()].getStyle());
+						tab[temp.getColonne()][temp.getLigne()]
+								.setBorder(null);
+						System.out.println("test " + tab[temp.getColonne()][temp.getLigne()].getStyle());
 
-						tab[colonne][ligne].setGraphic((ImageView) tab[colonne][ligne].getGraphic());
+
+						tab[colonne][ligne].setGraphic(iconeTampon);
 						echiquier.getCase(colonne, ligne).setPiece(pieceTampon);
 						tab[temp.getColonne()][temp.getLigne()].setGraphic(null);
 
