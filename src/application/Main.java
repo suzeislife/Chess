@@ -1,5 +1,7 @@
 package application;
 
+import java.io.File;
+
 import javax.swing.ImageIcon;
 
 import Piece.Cavalier;
@@ -63,7 +65,7 @@ public class Main extends Application {
 		// Set element mid
 		createGrid();
 		white.setStyle("-fx-background-color : white");
-		black.setStyle("-fx-background-color : black");
+		black.setStyle("-fx-background-color : gray");
 
 		// set PanelBlanc/Noir
 		panelBlanc.getChildren().add(white);
@@ -122,13 +124,13 @@ public class Main extends Application {
 
 				
 				if (i % 2 == 0 && j % 2 == 0) {
-					tab[i][j].setStyle("-fx-background-color : black");
+					tab[i][j].setStyle("-fx-background-color : gray");
 				} else if (j % 2 != 0 && i % 2 == 0) {
 					tab[i][j].setStyle("-fx-background-color : white");
 				} else if (j % 2 == 0 && i % 2 != 0) {
 					tab[i][j].setStyle("-fx-background-color : white");
 				} else {
-					tab[i][j].setStyle("-fx-background-color : black");
+					tab[i][j].setStyle("-fx-background-color : gray");
 				}
 				tab[i][j].setPrefSize(60, 60);
 				chessGrid.add(tab[i][j], i, j);
@@ -147,7 +149,7 @@ public class Main extends Application {
 		// Init J1
 		currentPlayer.setText("J1");
 		echiquier.debuter();
-		String dossierIcone = "/src/Icone/";
+		String dossierIcone = "src/Icone/";
 		char[] ordrePiece = { 'T', 'C', 'F', 'D', 'R', 'F', 'C', 'T' };
 		int increment = 1;
 		int ligne = 0;
@@ -157,8 +159,7 @@ public class Main extends Application {
 
 		while (increment >= -1) {
 			for (int i = 0; i < 8; i++) {
-				System.out.println(dossierIcone + ordrePiece[i] + couleur + ".gif");
-				tab[i][ligne].setGraphic(new ImageView(dossierIcone + ordrePiece[i] + couleur + ".gif"));
+				tab[i][ligne].setGraphic(new ImageView(new File(dossierIcone + ordrePiece[i] + couleur + ".gif").toURI().toString()));
 				switch (ordrePiece[i]) {
 				case 'T':
 					tempo = new Tour(ligne < 5 ? "noir" : "blanc");
@@ -182,7 +183,7 @@ public class Main extends Application {
 
 				}
 				echiquier.getCase(i, ligne).setPiece(tempo);
-				tab[i][ligne + increment].setGraphic(new ImageView(dossierIcone + 'P' + couleur + ".gif"));
+				tab[i][ligne + increment].setGraphic(new ImageView(new File(dossierIcone + 'P' + couleur + ".gif").toURI().toString()));
 				echiquier.getCase(i, ligne + increment).setPiece(new Pion(ligne < 5 ? "noir" : "blanc"));
 
 			}
