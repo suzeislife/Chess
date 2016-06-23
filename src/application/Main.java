@@ -156,7 +156,6 @@ public class Main extends Application {
 		char couleur = 'N';
 		Piece tempo = null;
 		echiquier.debuter();
-
 		while (increment >= -1) {
 			for (int i = 0; i < 8; i++) {
 				tab[i][ligne].setGraphic(new ImageView(new File(dossierIcone + ordrePiece[i] + couleur + ".gif").toURI().toString()));
