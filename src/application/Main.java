@@ -50,6 +50,11 @@ public class Main extends Application {
 	private Label white = new Label();
 	private Label black = new Label();
 
+	private ImageView iconeTampon;
+	private Piece pieceTampon = null;
+	private Position temp = null;
+	private String couleurControle = "blanc";
+
 	@Override
 	public void init() throws Exception {
 		super.init();
@@ -86,6 +91,9 @@ public class Main extends Application {
 		// Event button
 		buttonStart.setOnAction(event -> {
 			initNewGame();
+		});
+		buttonReset.setOnAction(event ->{
+			RAZ();
 		});
 	}
 
@@ -197,17 +205,12 @@ public class Main extends Application {
 
 	}
 
-	ImageView iconeTampon;
-	Piece pieceTampon = null;
-	Position temp = null;
-
 	@SuppressWarnings("unused")
 	public void changePion(int ligne, int colonne) {
 
 		int ligneClic;
 		int colonneClic;
 		Position depart, arrivee;
-		String couleurControle = "blanc";
 
 		if ((echiquier.getCase(colonne, ligne).getPiece() != null | pieceTampon != null)) {
 
@@ -227,15 +230,14 @@ public class Main extends Application {
 				Deplacement deplacement = new Deplacement(temp, new Position(colonne, ligne));
 				if ((pieceTampon.estValide(deplacement) && echiquier.cheminPossible(deplacement))
 						| echiquier.captureParUnPionPossible(deplacement)) {
-					Label manger = tab[colonne][ligne];
-					// JLabel manger = new
-					// JLabel(tab[colonne][ligne].getIcon());
-					// manger.setHorizontalAlignment(SwingConstants.CENTER);
-
-					if (couleurControle.equals("blanc"))
-						panelBlanc.getChildren().add(manger);
-					else
-						panelNoir.getChildren().add(manger);
+					System.out.println(echiquier.captureParUnPionPossible(deplacement));
+					if (couleurControle.equals("blanc") && echiquier.captureParUnPionPossible(deplacement)) {
+						System.out.println("blanc");
+						panelBlanc.getChildren().add(tab[colonne][ligne].getGraphic());
+					} else if (couleurControle.equals("noir") && echiquier.captureParUnPionPossible(deplacement)) {
+						System.out.println("noir");
+						panelNoir.getChildren().add(tab[colonne][ligne].getGraphic());
+					}
 					if (echiquier.getCase(colonne, ligne).getPiece() instanceof Roi) {
 						System.out.println("test");
 						Alert dialog = new Alert(AlertType.CONFIRMATION);
@@ -244,8 +246,8 @@ public class Main extends Application {
 						dialog.setContentText("Félicitation vous avez gagné ! Désirez vous recommencer?");
 						Optional<ButtonType> result = dialog.showAndWait();
 						if (result.get() == ButtonType.OK) {
-							RAZ();
 							tab[temp.getColonne()][temp.getLigne()].setStyle("-fx-border-color: white");
+							RAZ();
 						} else
 							System.exit(0);
 					} else {
@@ -253,10 +255,8 @@ public class Main extends Application {
 						System.out.println("dedew " + tab[temp.getColonne()][temp.getLigne()].getStyle());
 						tab[temp.getColonne()][temp.getLigne()]
 								.setStyle(tab[temp.getColonne()][temp.getLigne()].getStyle());
-						tab[temp.getColonne()][temp.getLigne()]
-								.setBorder(null);
+						tab[temp.getColonne()][temp.getLigne()].setBorder(null);
 						System.out.println("test " + tab[temp.getColonne()][temp.getLigne()].getStyle());
-
 
 						tab[colonne][ligne].setGraphic(iconeTampon);
 						echiquier.getCase(colonne, ligne).setPiece(pieceTampon);
@@ -287,8 +287,23 @@ public class Main extends Application {
 	}
 
 	private void RAZ() {
-		// TODO Auto-generated method stub
+		for (int ligne = 0; ligne < 8; ligne++)
+			for (int colonne = 0; colonne < 8; colonne++) {
+				tab[colonne][ligne].setGraphic(null);
+				echiquier.getCase(colonne, ligne).setPiece(null);
+			}
+		//createGrid();
+	//	initNewGame();
 
+	//	currentPlayer.setText("J1");
+		// boutonDebuter.setEnabled(true);
+	//	echiquier.debuter();
+	//	String couleurControle = "blanc";
+
+		// panelblanc.removeAll();
+		// panelblanc.repaint();
+		// panelnoir.removeAll();
+		// panelnoir.repaint();
 	}
 
 }
