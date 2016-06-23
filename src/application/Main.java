@@ -1,6 +1,7 @@
 package application;
 
 import java.io.File;
+import java.util.Optional;
 
 import javax.swing.ImageIcon;
 
@@ -17,7 +18,10 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -113,7 +117,7 @@ public class Main extends Application {
 					public void handle(Event event) {
 						for (int i = 0; i < 8; i++) {
 							for (int j = 0; j < 8; j++) {
-								if(event.getSource().equals(tab[i][j])){
+								if (event.getSource().equals(tab[i][j])) {
 									changePion(i, j);
 								}
 							}
@@ -121,7 +125,6 @@ public class Main extends Application {
 					}
 				});
 
-				
 				if (i % 2 == 0 && j % 2 == 0) {
 					tab[i][j].setStyle("-fx-background-color : gray");
 				} else if (j % 2 != 0 && i % 2 == 0) {
@@ -157,7 +160,8 @@ public class Main extends Application {
 		echiquier.debuter();
 		while (increment >= -1) {
 			for (int i = 0; i < 8; i++) {
-				tab[i][ligne].setGraphic(new ImageView(new File(dossierIcone + ordrePiece[i] + couleur + ".gif").toURI().toString()));
+				tab[i][ligne].setGraphic(
+						new ImageView(new File(dossierIcone + ordrePiece[i] + couleur + ".gif").toURI().toString()));
 				switch (ordrePiece[i]) {
 				case 'T':
 					tempo = new Tour(ligne < 5 ? "noir" : "blanc");
@@ -181,7 +185,8 @@ public class Main extends Application {
 
 				}
 				echiquier.getCase(i, ligne).setPiece(tempo);
-				tab[i][ligne + increment].setGraphic(new ImageView(new File(dossierIcone + 'P' + couleur + ".gif").toURI().toString()));
+				tab[i][ligne + increment]
+						.setGraphic(new ImageView(new File(dossierIcone + 'P' + couleur + ".gif").toURI().toString()));
 				echiquier.getCase(i, ligne + increment).setPiece(new Pion(ligne < 5 ? "noir" : "blanc"));
 
 			}
@@ -192,8 +197,85 @@ public class Main extends Application {
 
 	}
 
+	@SuppressWarnings("unused")
 	public void changePion(int ligne, int colonne) {
-		
+		Piece pieceTampon = null;
+		ImageView iconeTampon;
+		int ligneClic;
+		int colonneClic;
+		Position depart, arrivee;
+		String couleurControle = "blanc";
+		Position temp = null;
+
+		if ((echiquier.getCase(colonne, ligne).getPiece() != null | pieceTampon != null)) {
+			if (pieceTampon == null) {
+				if (echiquier.getCase(colonne, ligne).getPiece().getCouleur().equals(couleurControle)) {
+					pieceTampon = echiquier.getCase(colonne, ligne).getPiece();
+					iconeTampon = (ImageView) tab[colonne][ligne].getGraphic();
+					temp = new Position(colonne, ligne);
+					tab[colonne][ligne].setStyle("-fx-border-color: red");
+				}
+
+			} else {
+				Deplacement deplacement = new Deplacement(temp, new Position(colonne, ligne));
+				if ((pieceTampon.estValide(deplacement) && echiquier.cheminPossible(deplacement))
+						| echiquier.captureParUnPionPossible(deplacement)) {
+					Label manger = tab[colonne][ligne];
+					// JLabel manger = new
+					// JLabel(tab[colonne][ligne].getIcon());
+					// manger.setHorizontalAlignment(SwingConstants.CENTER);
+
+					if (couleurControle.equals("blanc"))
+						panelBlanc.getChildren().add(manger);
+					else
+						panelNoir.getChildren().add(manger);
+					if (echiquier.getCase(colonne, ligne).getPiece() instanceof Roi) {
+						System.out.println("test");
+						Alert dialog = new Alert(AlertType.CONFIRMATION);
+						dialog.setTitle("Chess - End Game");
+						dialog.setHeaderText("Chess - End Game");
+						dialog.setContentText("Félicitation vous avez gagné ! Désirez vous recommencer?");
+						Optional<ButtonType> result = dialog.showAndWait();
+						if (result.get() == ButtonType.OK) {
+							RAZ();
+							tab[temp.getColonne()][temp.getLigne()].setStyle("-fx-border-color: white");
+						} else
+							System.exit(0);
+					} else {
+						echiquier.getCase(temp.getColonne(), temp.getLigne()).setPiece(null);
+						tab[temp.getColonne()][temp.getLigne()].setStyle("-fx-border-color: white");
+
+						tab[colonne][ligne].setGraphic((ImageView) tab[colonne][ligne].getGraphic());
+						echiquier.getCase(colonne, ligne).setPiece(pieceTampon);
+						tab[temp.getColonne()][temp.getLigne()].setGraphic(null);
+
+						pieceTampon = null;
+						iconeTampon = null;
+						temp = null;
+
+						couleurControle = couleurControle.equals("blanc") ? "noir" : "blanc";
+						if (currentPlayer.getText() == "J2") {
+							currentPlayer.setText("J1");
+						} else {
+							currentPlayer.setText("J2");
+						}
+					}
+				} else {
+					tab[temp.getColonne()][temp.getLigne()].setStyle("-fx-border-color: white");
+					pieceTampon = null;
+					iconeTampon = null;
+					temp = null;
+
+				}
+
+			}
+
+		}
+	}
+
+	private void RAZ() {
+		// TODO Auto-generated method stub
+
 	}
 
 }
